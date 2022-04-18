@@ -3,7 +3,7 @@ import { Request, Response} from "express";
 export const getUsers = ( req: Request, res: Response) => {
     res.json({
         msg: 'getUsers',
-    })
+    });
 }
 
 export const getUser = ( req: Request, res: Response) => {
@@ -12,7 +12,7 @@ export const getUser = ( req: Request, res: Response) => {
 
     res.json({
         msg: 'getUser',
-    })
+    });
 }
 
 export const postUser = ( req: Request, res: Response) => {
@@ -22,7 +22,7 @@ export const postUser = ( req: Request, res: Response) => {
     res.json({
         msg: 'postUser',
         body
-    })
+    });
 }
 
 export const putUser = ( req: Request, res: Response) => {
@@ -32,8 +32,9 @@ export const putUser = ( req: Request, res: Response) => {
 
     res.json({
         msg: 'putUser',
-        body
-    })
+        body,
+        id
+    });
 }
 
 export const deleteUser = ( req: Request, res: Response) => {
