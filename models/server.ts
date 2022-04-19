@@ -2,6 +2,8 @@ import express, { Application }  from 'express';
 import userRoutes from '../routes/user';
 import cors from 'cors';
 
+import db from "../db/connection";
+
 class Server {
 
     private app: Application;
@@ -15,9 +17,19 @@ class Server {
         this.port = process.env.PORT || '8080';
 
         // Initial methods
+        this.dbConnection();
         this.middlewares();
         this.routes();
 
+    }
+
+    async dbConnection() {
+        try {
+            await db.authenticate();
+            console.log('Database connection established');
+        } catch (e:any) {
+            throw new Error(e);
+        }
     }
 
     middlewares() {
