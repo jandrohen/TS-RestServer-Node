@@ -1,4 +1,5 @@
 import { Request, Response} from "express";
+import { where } from "sequelize/types";
 import User from "../models/user";
 
 export const getUsers = async (req: Request, res: Response) => {
@@ -23,9 +24,31 @@ export const getUser = async ( req: Request, res: Response) => {
     }
 }
 
-export const postUser = ( req: Request, res: Response) => {
+export const postUser = async (req: Request, res: Response) => {
 
     const { body } = req;
+
+    try {
+
+        const existEmail = await User.findOne({
+            where: {email: body.email}
+        })
+
+        if (existEmail) {
+            return res.status(400).json({
+                msg: 'Ya existe un usuario con ese email' + body.email
+            });
+        }
+
+        const user = await User.create(body);
+
+        res.json(user);
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({
+            msg: 'Hable con el admin'
+        })
+    }
 
     res.json({
         msg: 'postUser',
@@ -33,24 +56,49 @@ export const postUser = ( req: Request, res: Response) => {
     });
 }
 
-export const putUser = ( req: Request, res: Response) => {
+export const putUser = async (req: Request, res: Response) => {
 
-    const { id } = req.params;
-    const { body } = req;
+    const {id} = req.params;
+    const {body} = req;
+
+    try {
+
+        const user = await User.findByPk(id)
+        if (!user) {
+            return res.status(400).json({
+                msg: 'Ya existe un usuario con ese id' + id
+            });
+        }
+
+        await user.update(body);
+
+        res.json(user)
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({
+            msg: 'Hable con el admin'
+        })
+    }
 
     res.json({
-        msg: 'putUser',
-        body,
-        id
+        msg: 'pustUser',
+        body
     });
 }
 
-export const deleteUser = ( req: Request, res: Response) => {
+export const deleteUser = async (req: Request, res: Response) => {
 
-    const { id } = req.params;
+    const {id} = req.params;
 
-    res.json({
-        msg: 'deleteUser',
-    })
+    const user = await User.findByPk(id)
+    if (!user) {
+        return res.status(400).json({
+            msg: 'Ya existe un usuario con ese id' + id
+        });
+    }
+
+    await user.update({status: 0})
+
+    res.json(user);
 }
 
